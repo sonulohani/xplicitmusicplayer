@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -13,8 +13,13 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        xmpmainwindow.cpp
+        xmpmainwindow.cpp \
+    xmphelperclass.cpp
 
-HEADERS  += xmpmainwindow.h
+HEADERS  += xmpmainwindow.h \
+    xmphelperclass.h
 
 FORMS    += xmpmainwindow.ui
+
+RESOURCES += \
+    icons.qrc

@@ -4,19 +4,19 @@
 #include <QMainWindow>
 
 namespace Ui {
-class XMPMainWindow;
+	class XMPMainWindow;
 }
 
 class XMPMainWindow : public QMainWindow
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    explicit XMPMainWindow(QWidget *parent = 0);
-    ~XMPMainWindow();
+	explicit XMPMainWindow(QWidget *parent = 0);
+	~XMPMainWindow();
 
 private:
-    Ui::XMPMainWindow *ui;
+	Ui::XMPMainWindow *ui;
 };
 
 #endif // XMPMAINWINDOW_H

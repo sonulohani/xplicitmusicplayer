@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/controls">
+        <file>resources/icons/fullVolume_icon.png</file>
+        <file>resources/icons/lowVolume_icon.png</file>
+        <file>resources/icons/mediumVolume_icon.png</file>
+        <file>resources/icons/mute_icon.png</file>
+        <file>resources/icons/next_icon.png</file>
+        <file>resources/icons/pause_icon.png</file>
+        <file>resources/icons/play_icon.png</file>
+        <file>resources/icons/previous_icon.png</file>
+        <file>resources/icons/repeat_icon.png</file>
+        <file>resources/icons/shuffle_icon.png</file>
+        <file>resources/icons/stop_icon.png</file>
+    </qresource>
+</RCC>

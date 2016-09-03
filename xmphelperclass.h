@@ -7,16 +7,16 @@
 
 namespace xmp
 {
-    namespace helper
-    {
-        class XMPHelperClass
-        {
-        public:
-            XMPHelperClass();
+	namespace helper
+	{
+		class XMPHelperClass
+		{
+		public:
+			XMPHelperClass();
 
-            static void setStandardControlButtonSettings( QPointer<QPushButton> pushButton );
-        };
-    }
+			static void setStandardControlButtonSettings(QPointer<QPushButton> pushButton);
+		};
+	}
 }
 
 #endif // XMPHELPERCLASS_H

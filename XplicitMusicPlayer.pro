@@ -14,11 +14,13 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         xmpmainwindow.cpp \
-    xmphelperclass.cpp
+    xmphelperclass.cpp \
+    xmpplaylist.cpp
 
 HEADERS  += xmpmainwindow.h \
     xmphelperclass.h \
-    macros.h
+    macros.h \
+    xmpplaylist.h
 
 FORMS    += xmpmainwindow.ui
 

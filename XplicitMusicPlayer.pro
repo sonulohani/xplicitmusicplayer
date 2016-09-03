@@ -17,7 +17,8 @@ SOURCES += main.cpp\
     xmphelperclass.cpp
 
 HEADERS  += xmpmainwindow.h \
-    xmphelperclass.h
+    xmphelperclass.h \
+    macros.h
 
 FORMS    += xmpmainwindow.ui
 

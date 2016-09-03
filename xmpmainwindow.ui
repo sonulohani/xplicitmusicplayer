@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>502</width>
-    <height>204</height>
+    <width>500</width>
+    <height>148</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,89 +16,131 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>0:00</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="QSlider" name="horizontalSlider">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QPushButton" name="previousPushButton">
-          <property name="text">
-           <string>PushButton</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="playPushButton">
-          <property name="text">
-           <string>PushButton</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="nextPushButton">
-          <property name="text">
-           <string>PushButton</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="volumePushButton">
-          <property name="text">
-           <string>PushButton</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="shufflePushButton">
-          <property name="text">
-           <string>PushButton</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="repeatPushButton">
-          <property name="text">
-           <string>PushButton</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>0:00</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton">
+        <property name="text">
+         <string>Open Media</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
     <item row="1" column="0">
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QPushButton" name="previousPushButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string>Previous</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_2">
+       <widget class="QPushButton" name="playPushButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string>Play/Pause</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_3">
+       <widget class="QPushButton" name="nextPushButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string>Next</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_4">
+       <widget class="QPushButton" name="volumePushButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
-         <string>TextLabel</string>
+         <string>Volume</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="shufflePushButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Repeat</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="repeatPushButton">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>Shuffle</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="2" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QLabel" name="songNameLabel">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="artistLabel">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="albumLabel">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="bitrateLabel">
+        <property name="text">
+         <string/>
         </property>
        </widget>
       </item>
@@ -111,7 +153,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>502</width>
+     <width>500</width>
      <height>21</height>
     </rect>
    </property>

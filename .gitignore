@@ -4,3 +4,9 @@ XplicitMusicPlayer.pro.user
 XplicitMusicPlayer.vcxproj.filters
 XplicitMusicPlayer.vcxproj
 .vs
+Makefile
+Makefile.Debug
+Makefile.Release
+debug
+Release
+ui_xmpmainwindow.h

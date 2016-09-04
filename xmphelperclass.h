@@ -14,7 +14,7 @@ namespace xmp
 		public:
 			XMPHelperClass();
 
-			static void setStandardControlButtonSettings(QPointer<QPushButton> pushButton);
+			static void setStandardControlButtonSettings(QPushButton *pushButton, const QString &iconName, bool isEnabled = false);
 		};
 	}
 }

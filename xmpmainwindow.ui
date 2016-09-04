@@ -58,7 +58,7 @@
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>Previous</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -68,7 +68,7 @@
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>Play/Pause</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -78,7 +78,7 @@
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>Next</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -88,7 +88,7 @@
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>Volume</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -98,7 +98,7 @@
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>Repeat</string>
+         <string/>
         </property>
        </widget>
       </item>
@@ -108,7 +108,7 @@
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>Shuffle</string>
+         <string/>
         </property>
        </widget>
       </item>

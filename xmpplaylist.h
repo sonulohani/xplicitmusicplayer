@@ -17,19 +17,21 @@ namespace xmp {
 			void initUI();
 			void addFilesToPlaylist(QStringList fileList);
 
-		public slots :
+		signals:
+			void mediaFilesChanged(bool isAdded);
+
+			public slots :
 			void onAddToPlaylistButtonClicked();
 			void onRemoveFromPlaylistButtonClicked();
 			void onItemSelectionChanged();
 
-		private slots:
+			private slots:
 			void updateUIState();
 
 		private:
 			QTableWidget *m_pTableWidget;
 			QPushButton *m_pAddToPlaylistButton;
 			QPushButton *m_pRemoveFromPlaylistButton;
-			QStringList m_mediaFiles;
 		};
 	}
 }

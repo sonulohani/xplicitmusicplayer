@@ -1,4 +1,4 @@
-#include "xmpplaylist.h"
+#include "XMPPlaylist.h"
 #include <macros.h>
 
 #include <QTableWidget>
@@ -71,9 +71,13 @@ namespace xmp {
 
 		void XMPPlaylist::onAddToPlaylistButtonClicked()
 		{
-			m_mediaFiles = QFileDialog::getOpenFileNames(this, "Open Media Files", QDir::home().dirName(), audioExtensionFilters);
-			addFilesToPlaylist(m_mediaFiles);
-			updateUIState();
+			QStringList mediaFiles = QFileDialog::getOpenFileNames(this, "Open Media Files", QDir::home().dirName(), audioExtensionFilters);
+			if (!mediaFiles.isEmpty())
+			{
+				addFilesToPlaylist(mediaFiles);
+				updateUIState();
+				emit mediaFilesChanged(true);
+			}
 		}
 
 		void XMPPlaylist::onRemoveFromPlaylistButtonClicked()
@@ -85,6 +89,7 @@ namespace xmp {
 				int row = tableWidgetItemList[i]->row();
 				m_pTableWidget->removeRow(row);
 			}
+			emit mediaFilesChanged(m_pTableWidget->rowCount());
 			updateUIState();
 		}
 		void XMPPlaylist::onItemSelectionChanged()

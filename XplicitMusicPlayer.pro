@@ -13,16 +13,18 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        xmpmainwindow.cpp \
-    xmphelperclass.cpp \
-    xmpplaylist.cpp
+        XMPMainWindow.cpp \
+    XMPHelperClass.cpp \
+    XMPPlaylist.cpp \
+	XMPMediaPlayer.cpp
 
-HEADERS  += xmpmainwindow.h \
-    xmphelperclass.h \
-    macros.h \
-    xmpplaylist.h
+HEADERS  += XMPMainWindow.h \
+    XMPHelperClass.h \
+    Macros.h \
+    XMPPlaylist.h \
+	XMPMediaPlayer.h
 
-FORMS    += xmpmainwindow.ui
+FORMS    += XMPMainWindow.ui
 
 RESOURCES += \
     icons.qrc

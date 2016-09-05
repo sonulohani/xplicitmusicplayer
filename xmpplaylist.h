@@ -37,6 +37,7 @@ namespace xmp {
 			QMediaPlaylist *playlist() const;
 			void addFilesToPlaylist(QStringList fileList);
 			void updateTableContent();
+			void highlightCurrentPlaying(int index);
 
 		signals:
 			void mediaFilesChanged(bool isAdded);

@@ -52,9 +52,7 @@ namespace xmp {
 		XMPMainWindow::XMPMainWindow(QWidget *parent) :
 			QMainWindow(parent),
 			ui(new Ui::XMPMainWindow),
-			m_pPlaylistWindow(nullptr),
-			m_state(STATE::STOP)
-		{
+			m_pPlaylistWindow(nullptr)		{
 			ui->setupUi(this);
 			initUI();
 			initComponent();
@@ -69,7 +67,8 @@ namespace xmp {
 			XMP_VALIDATE(connect(ui->nextPushButton, SIGNAL(clicked()), SLOT(onNextButtonClicked())));
 			XMP_VALIDATE(connect(ui->previousPushButton, SIGNAL(clicked()), SLOT(onPrevButtonClicked())));
 			XMP_VALIDATE(connect(ui->volumePushButton, SIGNAL(clicked()), SLOT(onVolumeButtonClicked())));
-			XMP_VALIDATE(connect(m_pVolumeSlider, SIGNAL(valueChanged(int)), this, SLOT(changeVolume(int))));
+			//XMP_VALIDATE(connect(m_pVolumeSlider, SIGNAL(valueChanged(int)), this, SLOT(changeVolume(int))));
+//			XMP_VALIDATE(connect(m_pMediaPlayer, SIGNAL(clicked()), SLOT(onVolumeButtonClicked())));
 		}
 
 		XMPMainWindow::~XMPMainWindow()
@@ -103,7 +102,6 @@ namespace xmp {
 
 		void XMPMainWindow::updateUIState(bool isEnabled)
 		{
-			m_state = STATE::STOP;
 			ui->previousPushButton->setEnabled(isEnabled);
 			ui->playPushButton->setEnabled(isEnabled);
 			ui->nextPushButton->setEnabled(isEnabled);
@@ -128,10 +126,11 @@ namespace xmp {
 
 		void XMPMainWindow::onPlayButtonClicked()
 		{
-			if ((m_state == STATE::PAUSE) || (m_state == STATE::STOP))
+			QMediaPlayer::State playState = m_pMediaPlayer->state();
+			QMediaPlaylist *pPlaylist = m_pPlaylistWindow->playlist();
+			if ((playState == QMediaPlayer::PausedState) || (playState == QMediaPlayer::StoppedState))
 			{
-				if (m_state != STATE::PAUSE) {
-					QMediaPlaylist *pPlaylist = m_pPlaylistWindow->playlist();
+				if (playState != QMediaPlayer::PausedState) {
 					if (pPlaylist->currentIndex() == -1)
 					{
 						pPlaylist->setCurrentIndex(0);
@@ -140,26 +139,25 @@ namespace xmp {
 					ui->finishTimeLabel->setText(QString::number(m_pMediaPlayer->duration()));
 				}
 				m_pMediaPlayer->play();
+				m_pPlaylistWindow->highlightCurrentPlaying(pPlaylist->currentIndex());
 				ui->playPushButton->setIcon(QIcon(pausePushButtonIconFilePath));
-				m_state = STATE::PLAY;
 			}
 			else
 			{
 				ui->playPushButton->setIcon(QIcon(playPushButtonIconFilePath));
 				m_pMediaPlayer->pause();
-				m_state = STATE::PAUSE;
 			}
 		}
 		void XMPMainWindow::onNextButtonClicked()
 		{
-			m_state = STATE::STOP;
+			m_pMediaPlayer->stop();
 			QMediaPlaylist *pPlaylist = m_pPlaylistWindow->playlist();
 			pPlaylist->next();
 			onPlayButtonClicked();
 		}
 		void XMPMainWindow::onPrevButtonClicked()
 		{
-			m_state = STATE::STOP;
+			m_pMediaPlayer->stop();
 			QMediaPlaylist *pPlaylist = m_pPlaylistWindow->playlist();
 			pPlaylist->previous();
 			onPlayButtonClicked();

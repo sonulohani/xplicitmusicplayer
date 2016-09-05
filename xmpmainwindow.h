@@ -39,12 +39,6 @@ namespace xmp {
 		class XMPMainWindow : public QMainWindow
 		{
 			Q_OBJECT
-			enum class STATE
-			{
-				PLAY,
-				PAUSE,
-				STOP
-			};
 		public:
 			//! Ctor
 			explicit XMPMainWindow(QWidget *parent = 0);
@@ -73,7 +67,6 @@ namespace xmp {
 			Ui::XMPMainWindow *ui;
 			XMPPlaylist *m_pPlaylistWindow;
 			multimedia::XMPMediaPlayer *m_pMediaPlayer;
-			STATE m_state;
 			XMPVolumeSlider *m_pVolumeSlider;
 		};
 	}

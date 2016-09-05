@@ -96,6 +96,12 @@ namespace xmp {
 			}
 		}
 
+		void XMPPlaylist::highlightCurrentPlaying(int index)
+		{
+			m_pTableWidget->selectionModel()->clear();
+			m_pTableWidget->item(index, COLUMN)->setSelected(true);
+		}
+
 		void XMPPlaylist::addFilesToPlaylist(QStringList fileList)
 		{
 			if (!fileList.isEmpty())

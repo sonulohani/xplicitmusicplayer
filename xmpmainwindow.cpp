@@ -4,20 +4,29 @@
 #include <macros.h>
 #include <XMPPlaylist.h>
 #include <XMPMediaPlayer.h>
+#include <XMPVolumeSlider.h>
 
 // Qt includes
 #include <QFileDialog>
 #include <QDir>
+#include <QFocusEvent>
+#include <qdebug.h>
+#include <QPoint>
+#include <QMediaPlaylist>
 
 // Private namespace
 namespace {
 	const QString audioExtensionFilters = "Media ( *.mp3 *.aac )";
 	const QString previousPushButtonIconFilePath = ":/controls/resources/icons/previous_icon_small.png";
 	const QString playPushButtonIconFilePath = ":/controls/resources/icons/play_icon_small.png";
+	const QString stopPushButtonIconFilePath = ":/controls/resources/icons/stop_icon_small.png";
+	const QString pausePushButtonIconFilePath = ":/controls/resources/icons/pause_icon_small.png";
 	const QString nextPushButtonIconFilePath = ":/controls/resources/icons/next_icon_small.png";
 	const QString volumePushButtonIconFilePath = ":/controls/resources/icons/fullVolume_icon_small.png";
 	const QString shufflePushButtonIconFilePath = ":/controls/resources/icons/shuffle_icon_small.png";
 	const QString repeatPushButtonIconFilePath = ":/controls/resources/icons/repeat_icon_small.png";
+	const QString mediumVolumePushButtonIconFilePath = ":/controls/resources/icons/mediumVolume_icon_small.png";
+	const QString muteVolumePushButtonIconFilePath = ":/controls/resources/icons/mute_icon_small.png";
 }
 
 namespace xmp {
@@ -25,7 +34,8 @@ namespace xmp {
 		XMPMainWindow::XMPMainWindow(QWidget *parent) :
 			QMainWindow(parent),
 			ui(new Ui::XMPMainWindow),
-			m_pPlaylistWindow(nullptr)
+			m_pPlaylistWindow(nullptr),
+			m_state(STATE::STOP)
 		{
 			ui->setupUi(this);
 			initUI();
@@ -36,10 +46,17 @@ namespace xmp {
 			XMP_VALIDATE(connect(ui->actionPlaylist, SIGNAL(triggered(bool)), SLOT(openPlaylist())));
 			XMP_VALIDATE(connect(m_pPlaylistWindow, SIGNAL(mediaFilesChanged(bool)), SLOT(updateUIState(bool))));
 			XMP_VALIDATE(connect(ui->openMediaButton, SIGNAL(clicked()), SLOT(openMediaFiles())));
+			XMP_VALIDATE(connect(ui->playPushButton, SIGNAL(clicked()), SLOT(onPlayButtonClicked())));
+			XMP_VALIDATE(connect(ui->actionPlay, SIGNAL(triggered()), SLOT(onPlayButtonClicked())));
+			XMP_VALIDATE(connect(ui->nextPushButton, SIGNAL(clicked()), SLOT(onNextButtonClicked())));
+			XMP_VALIDATE(connect(ui->previousPushButton, SIGNAL(clicked()), SLOT(onPrevButtonClicked())));
+			XMP_VALIDATE(connect(ui->volumePushButton, SIGNAL(clicked()), SLOT(onVolumeButtonClicked())));
+			XMP_VALIDATE(connect(m_pVolumeSlider, SIGNAL(valueChanged(int)), this, SLOT(changeVolume(int))));
 		}
 
 		XMPMainWindow::~XMPMainWindow()
 		{
+			m_pVolumeSlider->deleteLater();
 			delete ui;
 		}
 
@@ -56,6 +73,8 @@ namespace xmp {
 			ui->artistLabel->hide();
 			ui->songNameLabel->hide();
 			ui->bitrateLabel->hide();
+
+			m_pVolumeSlider = new XMPVolumeSlider;
 		}
 
 		void XMPMainWindow::initComponent()
@@ -66,6 +85,7 @@ namespace xmp {
 
 		void XMPMainWindow::updateUIState(bool isEnabled)
 		{
+			m_state = STATE::STOP;
 			ui->previousPushButton->setEnabled(isEnabled);
 			ui->playPushButton->setEnabled(isEnabled);
 			ui->nextPushButton->setEnabled(isEnabled);
@@ -75,20 +95,80 @@ namespace xmp {
 
 		void XMPMainWindow::openMediaFiles()
 		{
-			m_mediaFiles = QFileDialog::getOpenFileNames(this, "Open Media Files", QDir::home().dirName(), audioExtensionFilters);
-			if (!m_mediaFiles.isEmpty())
+			QStringList mediaFiles = QFileDialog::getOpenFileNames(this, "Open Media Files", QDir::home().dirName(), audioExtensionFilters);
+			if (!mediaFiles.isEmpty())
 			{
-				m_pPlaylistWindow->addFilesToPlaylist(m_mediaFiles);
+				m_pPlaylistWindow->addFilesToPlaylist(mediaFiles);
 				updateUIState(true);
 			}
-			// Dummy statement. Remove it after test
-			m_pMediaPlayer->setFileToPlay(m_mediaFiles[0]);
-			m_pMediaPlayer->play();
 		}
 
 		void XMPMainWindow::openPlaylist()
 		{
 			m_pPlaylistWindow->show();
+		}
+
+		void XMPMainWindow::onPlayButtonClicked()
+		{
+			if ((m_state == STATE::PAUSE) || (m_state == STATE::STOP))
+			{
+				if (m_state != STATE::PAUSE) {
+					QMediaPlaylist *pPlaylist = m_pPlaylistWindow->playlist();
+					if (pPlaylist->currentIndex() == -1)
+					{
+						pPlaylist->setCurrentIndex(0);
+					}
+					m_pMediaPlayer->setMedia(pPlaylist->media(pPlaylist->currentIndex()));
+					ui->finishTimeLabel->setText(QString::number(m_pMediaPlayer->duration()));
+				}
+				m_pMediaPlayer->play();
+				ui->playPushButton->setIcon(QIcon(pausePushButtonIconFilePath));
+				m_state = STATE::PLAY;
+			}
+			else
+			{
+				ui->playPushButton->setIcon(QIcon(playPushButtonIconFilePath));
+				m_pMediaPlayer->pause();
+				m_state = STATE::PAUSE;
+			}
+		}
+		void XMPMainWindow::onNextButtonClicked()
+		{
+			m_state = STATE::STOP;
+			QMediaPlaylist *pPlaylist = m_pPlaylistWindow->playlist();
+			pPlaylist->next();
+			onPlayButtonClicked();
+		}
+		void XMPMainWindow::onPrevButtonClicked()
+		{
+			m_state = STATE::STOP;
+			QMediaPlaylist *pPlaylist = m_pPlaylistWindow->playlist();
+			pPlaylist->previous();
+			onPlayButtonClicked();
+		}
+		void XMPMainWindow::onVolumeButtonClicked()
+		{
+			m_pVolumeSlider->setValue(m_pMediaPlayer->volume());
+			m_pVolumeSlider->move(mapToParent( QPoint( ui->volumePushButton->x() - 50, ui->volumePushButton->y() + 15 )));
+			m_pVolumeSlider->show();
+			m_pVolumeSlider->setFocus();
+		}
+		void XMPMainWindow::changeVolume(int value)
+		{
+			m_pMediaPlayer->setVolume(value);
+
+			if (value == 0)
+			{
+				ui->volumePushButton->setIcon(QIcon(muteVolumePushButtonIconFilePath));
+			}
+			else if (value < 60)
+			{
+				ui->volumePushButton->setIcon(QIcon(mediumVolumePushButtonIconFilePath));
+			}
+			else
+			{
+				ui->volumePushButton->setIcon(QIcon(volumePushButtonIconFilePath));
+			}
 		}
 	}
 }

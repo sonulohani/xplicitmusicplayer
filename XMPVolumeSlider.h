@@ -24,7 +24,6 @@
 class QFocusEvent;
 namespace xmp {
 	namespace ui {
-
 		class XMPVolumeSlider :
 			public QSlider
 		{

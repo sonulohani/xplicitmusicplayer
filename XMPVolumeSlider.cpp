@@ -33,7 +33,6 @@ namespace xmp {
 			hide();
 		}
 
-
 		XMPVolumeSlider::~XMPVolumeSlider()
 		{
 		}
@@ -45,4 +44,3 @@ namespace xmp {
 		}
 	}
 }
-

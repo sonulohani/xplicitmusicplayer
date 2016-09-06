@@ -57,7 +57,7 @@ namespace xmp {
 		XMPMainWindow::XMPMainWindow(QWidget *parent) :
 			QMainWindow(parent),
 			ui(new Ui::XMPMainWindow),
-			m_pPlaylistWindow(nullptr)		{
+			m_pPlaylistWindow(nullptr) {
 			ui->setupUi(this);
 			initUI();
 			initComponent();
@@ -99,7 +99,7 @@ namespace xmp {
 
 			ui->albumArtLabel->setPixmap(QPixmap(albumArtFilePath));
 
-			m_pVolumeSlider = new XMPVolumeSlider;			
+			m_pVolumeSlider = new XMPVolumeSlider;
 		}
 
 		void XMPMainWindow::initComponent()
@@ -107,7 +107,7 @@ namespace xmp {
 			m_pPlaylistWindow = new XMPPlaylist(this);
 			m_pMediaPlayer = new multimedia::XMPMediaPlayer(this);
 			QGridLayout *pGridLayout = new QGridLayout(ui->playListWidget);
-			pGridLayout->addWidget(m_pPlaylistWindow,0,0,1,1);
+			pGridLayout->addWidget(m_pPlaylistWindow, 0, 0, 1, 1);
 			m_pMediaPlayer->setPlaylist(m_pPlaylistWindow->playlist());
 		}
 
@@ -177,7 +177,7 @@ namespace xmp {
 		void XMPMainWindow::onVolumeButtonClicked()
 		{
 			m_pVolumeSlider->setValue(m_pMediaPlayer->volume());
-			m_pVolumeSlider->move(mapToParent( QPoint( ui->volumePushButton->x() - 50, ui->volumePushButton->y() + 70 )));
+			m_pVolumeSlider->move(mapToParent(QPoint(ui->volumePushButton->x() - 50, ui->volumePushButton->y() + 70)));
 			m_pVolumeSlider->show();
 			m_pVolumeSlider->setFocus();
 		}

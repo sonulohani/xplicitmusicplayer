@@ -43,10 +43,10 @@ namespace xmp {
 		signals:
 			void mediaFilesChanged(bool isAdded);
 
-		public slots :
+			public slots :
 			void onAddToPlaylistButtonClicked();
 
-		private slots:
+			private slots:
 			void onClearPlaylistButtonClicked();
 			void onRemoveFromPlaylistButtonClicked();
 

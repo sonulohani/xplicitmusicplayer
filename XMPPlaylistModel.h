@@ -27,7 +27,6 @@ QT_END_NAMESPACE
 
 namespace xmp {
 	namespace model {
-
 		class XMPPlaylistModel : public QAbstractItemModel
 		{
 			Q_OBJECT

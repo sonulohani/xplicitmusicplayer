@@ -24,7 +24,6 @@
 
 namespace xmp {
 	namespace model {
-
 		XMPPlaylistModel::XMPPlaylistModel(QObject *parent)
 			: QAbstractItemModel(parent)
 			, m_playlist(0)

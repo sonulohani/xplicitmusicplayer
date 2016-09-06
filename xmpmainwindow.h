@@ -51,7 +51,7 @@ namespace xmp {
 			void initUI();
 			void initComponent();
 
-		private slots:
+			private slots:
 			void openMediaFiles();
 			void openPlaylist();
 			void onPlayButtonClicked();

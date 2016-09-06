@@ -16,7 +16,7 @@
 |*|  along with XplicitMusicPlayer.  If not, see <http://www.gnu.org/licenses/>.
 \*/
 
-#include "XMPMediaPlayer.h"
+#include "XMPMediaPlayer.hpp"
 #include <QMediaContent>
 
 namespace xmp

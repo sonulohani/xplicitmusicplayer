@@ -16,7 +16,7 @@
 |*|  along with XplicitMusicPlayer.  If not, see <http://www.gnu.org/licenses/>.
 \*/
 
-#include "XMPVolumeSlider.h"
+#include "XMPVolumeSlider.hpp"
 
 #include <QFocusEvent>
 

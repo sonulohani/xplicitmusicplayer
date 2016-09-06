@@ -16,13 +16,13 @@
 |*|  along with XplicitMusicPlayer.  If not, see <http://www.gnu.org/licenses/>.
 \*/
 
-#include "XMPMainWindow.h"
+#include "XMPMainWindow.hpp"
 #include "ui_xmpmainwindow.h"
-#include <XMPHelperClass.h>
-#include <macros.h>
-#include <XMPPlaylist.h>
-#include <XMPMediaPlayer.h>
-#include <XMPVolumeSlider.h>
+#include <XMPHelperClass.hpp>
+#include <macros.hpp>
+#include <XMPPlaylist.hpp>
+#include <XMPMediaPlayer.hpp>
+#include <XMPVolumeSlider.hpp>
 
 // Qt includes
 #include <QFileDialog>

@@ -16,7 +16,7 @@
 |*|  along with XplicitMusicPlayer.  If not, see <http://www.gnu.org/licenses/>.
 \*/
 
-#include "XMPHelperClass.h"
+#include "XMPHelperClass.hpp"
 
 #include <QIcon>
 #include <QPixmap>

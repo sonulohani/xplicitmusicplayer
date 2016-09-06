@@ -16,7 +16,7 @@
 |*|  along with XplicitMusicPlayer.  If not, see <http://www.gnu.org/licenses/>.
 \*/
 
-#include "xmpmainwindow.h"
+#include "XMPMainWindow.hpp"
 #include <QApplication>
 #include <QTime>
 #include <QStyle>

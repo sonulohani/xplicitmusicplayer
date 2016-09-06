@@ -16,7 +16,7 @@
 |*|  along with XplicitMusicPlayer.  If not, see <http://www.gnu.org/licenses/>.
 \*/
 
-#include "XMPPlaylistModel.h"
+#include "XMPPlaylistModel.hpp"
 
 #include <QFileInfo>
 #include <QUrl>

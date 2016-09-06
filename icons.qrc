@@ -22,5 +22,6 @@
         <file>resources/icons/repeat_icon_small.png</file>
         <file>resources/icons/shuffle_icon_small.png</file>
         <file>resources/icons/stop_icon_small.png</file>
+        <file>resources/icons/dummy_album_art.jpg</file>
     </qresource>
 </RCC>

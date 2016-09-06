@@ -3,21 +3,22 @@
 |*|
 |*|  This file is part of the XMPMusicPlayer program.
 |*|
-|*|  AvCaster is free software: you can redistribute it and/or modify
+|*|  XplicitMusicPlayer is free software: you can redistribute it and/or modify
 |*|  it under the terms of the GNU Lesser General Public License version 3
 |*|  as published by the Free Software Foundation.
 |*|
-|*|  AvCaster is distributed in the hope that it will be useful,
+|*|  XplicitMusicPlayer is distributed in the hope that it will be useful,
 |*|  but WITHOUT ANY WARRANTY; without even the implied warranty of
 |*|  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 |*|  GNU Lesser General Public License for more details.
 |*|
 |*|  You should have received a copy of the GNU Lesser General Public License
-|*|  along with AvCaster.  If not, see <http://www.gnu.org/licenses/>.
+|*|  along with XplicitMusicPlayer.  If not, see <http://www.gnu.org/licenses/>.
 \*/
 
 #include "XMPPlaylist.h"
 #include <macros.h>
+#include <XMPPlaylistModel.h>
 
 #include <QTableWidget>
 #include <QPushButton>
@@ -28,6 +29,7 @@
 #include <QHeaderView>
 #include <QList>
 #include <QMediaPlaylist>
+#include <QListView>
 
 using QTableWidgetItemList = QList<QTableWidgetItem*>;
 
@@ -41,19 +43,20 @@ namespace xmp {
 		XMPPlaylist::XMPPlaylist(QWidget *parent) : QDialog(parent)
 		{
 			initUI();
-			updateUIState();
 			XMP_VALIDATE(connect(m_pAddToPlaylistButton, SIGNAL(clicked()), SLOT(onAddToPlaylistButtonClicked())));
 			XMP_VALIDATE(connect(m_pRemoveFromPlaylistButton, SIGNAL(clicked()), SLOT(onRemoveFromPlaylistButtonClicked())));
 			XMP_VALIDATE(connect(m_pClearPlaylistPushButton, SIGNAL(clicked()), SLOT(onClearPlaylistButtonClicked())));
-			XMP_VALIDATE(connect(m_pTableWidget, SIGNAL(itemSelectionChanged()), SLOT(updateUIState())));
 		}
 
 		void XMPPlaylist::initUI()
 		{
-			m_pTableWidget = new QTableWidget(this);
-			m_pTableWidget->horizontalHeader()->setStretchLastSection(true);
-			m_pTableWidget->horizontalHeader()->hide();
-			m_pTableWidget->setColumnCount(1);
+			m_pMediaPlaylist = new QMediaPlaylist(this);
+			m_pPlaylistModel = new model::XMPPlaylistModel(this);
+
+			m_pListView = new QListView(this);
+			m_pListView->setModel(m_pPlaylistModel);
+
+			m_pPlaylistModel->setPlaylist(m_pMediaPlaylist);
 
 			m_pAddToPlaylistButton = new QPushButton(this);
 			m_pAddToPlaylistButton->setText(tr("+"));
@@ -70,36 +73,17 @@ namespace xmp {
 			pHorizontalButtonLayout->addWidget(m_pClearPlaylistPushButton);
 
 			QVBoxLayout *pParentLayout = new QVBoxLayout(this);
-			pParentLayout->addWidget(m_pTableWidget);
+			pParentLayout->addWidget(m_pListView);
 			pParentLayout->addLayout(pHorizontalButtonLayout);
 
 			setLayout(pParentLayout);
 
-			m_pMediaPlaylist = new QMediaPlaylist(this);
+			m_pListView->setCurrentIndex(m_pPlaylistModel->index(m_pMediaPlaylist->currentIndex(), 0));
 		}
 
 		QMediaPlaylist * XMPPlaylist::playlist() const
 		{
 			return m_pMediaPlaylist;
-		}
-
-		void XMPPlaylist::updateTableContent()
-		{
-			// Clearing all the items from the table and reinserting it from beginning
-			m_pTableWidget->setRowCount(0);
-			m_pTableWidget->setRowCount(m_pMediaPlaylist->mediaCount());
-			for (int i = 0; i < m_pMediaPlaylist->mediaCount(); i++)
-			{
-				QTableWidgetItem *pItem = new QTableWidgetItem();
-				pItem->setText(QFileInfo(m_pMediaPlaylist->media(i).canonicalUrl().toString()).fileName());
-				m_pTableWidget->setItem(i, COLUMN, pItem);
-			}
-		}
-
-		void XMPPlaylist::highlightCurrentPlaying(int index)
-		{
-			m_pTableWidget->selectionModel()->clear();
-			m_pTableWidget->item(index, COLUMN)->setSelected(true);
 		}
 
 		void XMPPlaylist::addFilesToPlaylist(QStringList fileList)
@@ -110,7 +94,6 @@ namespace xmp {
 				{
 					m_pMediaPlaylist->addMedia(QUrl(file));
 				}
-				updateTableContent();
 			}
 		}
 
@@ -120,40 +103,21 @@ namespace xmp {
 			if (!mediaFiles.isEmpty())
 			{
 				addFilesToPlaylist(mediaFiles);
-				updateUIState();
-				emit mediaFilesChanged(true);
 			}
 		}
 
 		void XMPPlaylist::onRemoveFromPlaylistButtonClicked()
 		{
-			QTableWidgetItemList tableWidgetItemList = m_pTableWidget->selectedItems();
-
-			for (int i = 0; i < tableWidgetItemList.count(); i++)
+			QModelIndexList selectedItemList = m_pListView->selectionModel()->selectedIndexes();
+			Q_FOREACH(const QModelIndex &index, selectedItemList)
 			{
-				int row = tableWidgetItemList[i]->row();
-				m_pTableWidget->removeRow(row);
-				m_pMediaPlaylist->removeMedia(row);
+				m_pMediaPlaylist->removeMedia(index.row());
 			}
-			emit mediaFilesChanged(m_pTableWidget->rowCount());
-			updateUIState();
-		}
-		void XMPPlaylist::onItemSelectionChanged()
-		{
-			m_pRemoveFromPlaylistButton->setEnabled(!m_pTableWidget->selectedItems().isEmpty());
 		}
 
 		void xmp::ui::XMPPlaylist::onClearPlaylistButtonClicked()
 		{
-			// Setting rowCount to 0 will delete the QTableWidgetItems automatically, by calling removeRows as you can see in QTableWidget internal model code
-			m_pTableWidget->setRowCount(0);
 			m_pMediaPlaylist->clear();
-			emit mediaFilesChanged(false);
-		}
-
-		void XMPPlaylist::updateUIState()
-		{
-			onItemSelectionChanged();
 		}
 	}
 }

@@ -20,13 +20,13 @@ SOURCES += main.cpp\
 	XMPVolumeSlider.cpp \
 	XMPPlaylistModel.cpp
 
-HEADERS  += XMPMainWindow.h \
-    XMPHelperClass.h \
-    Macros.h \
-    XMPPlaylist.h \
-	XMPMediaPlayer.h \
-	XMPVolumeSlider.h \
-	XMPPlaylistModel.h
+HEADERS  += XMPMainWindow.hpp \
+    XMPHelperClass.hpp \
+    Macros.hpp \
+    XMPPlaylist.hpp \
+	XMPMediaPlayer.hpp \
+	XMPVolumeSlider.hpp \
+	XMPPlaylistModel.hpp
 
 FORMS    += XMPMainWindow.ui
 

@@ -24,6 +24,13 @@
 #include <XMPMediaPlayer.hpp>
 #include <XMPVolumeSlider.hpp>
 
+// Taglib includes
+#include <id3v2tag.h>
+#include <mpegfile.h>
+#include <attachedpictureframe.h>
+#include <id3v2frame.h>
+#include <tlist.h>
+
 // Qt includes
 #include <QFileDialog>
 #include <QDir>
@@ -34,6 +41,9 @@
 #include <QMediaPlaylist>
 #include <QMediaMetaData>
 #include <QVariant>
+#include <QMessageBox>
+#include <QByteArray>
+#include <QResizeEvent>
 
 // Private namespace
 namespace {
@@ -73,7 +83,9 @@ namespace xmp {
 			XMP_VALIDATE(connect(ui->nextPushButton, SIGNAL(clicked()), SLOT(onNextButtonClicked())));
 			XMP_VALIDATE(connect(ui->previousPushButton, SIGNAL(clicked()), SLOT(onPrevButtonClicked())));
 			XMP_VALIDATE(connect(ui->volumePushButton, SIGNAL(clicked()), SLOT(onVolumeButtonClicked())));
-			XMP_VALIDATE(connect(m_pVolumeSlider, SIGNAL(valueChanged(int)), this, SLOT(changeVolume(int))));
+			XMP_VALIDATE(connect(m_pVolumeSlider, SIGNAL(valueChanged(int)), SLOT(changeVolume(int))));
+			XMP_VALIDATE(connect(m_pMediaPlayer, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(onStateChanged(QMediaPlayer::State))));
+			XMP_VALIDATE(connect(m_pMediaPlayer, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), SLOT(onMediaStatusChanged(QMediaPlayer::MediaStatus))));
 		}
 
 		XMPMainWindow::~XMPMainWindow()
@@ -92,14 +104,12 @@ namespace xmp {
 			xmp::helper::XMPHelperClass::setStandardControlButtonSettings(ui->shufflePushButton, shufflePushButtonIconFilePath);
 			xmp::helper::XMPHelperClass::setStandardControlButtonSettings(ui->repeatPushButton, repeatPushButtonIconFilePath);
 
-			ui->albumLabel->hide();
-			ui->artistLabel->hide();
-			ui->songNameLabel->hide();
-			ui->bitrateLabel->hide();
-
-			ui->albumArtLabel->setPixmap(QPixmap(albumArtFilePath));
-
+			ui->songNameLabel->setText("<b>Song :- </b>");
+			ui->artistLabel->setText("<b>Artist :- </b>");
+			ui->albumLabel->setText("<b>Album :- </b>");
 			m_pVolumeSlider = new XMPVolumeSlider;
+
+			resize(500,400);
 		}
 
 		void XMPMainWindow::initComponent()
@@ -109,6 +119,22 @@ namespace xmp {
 			QGridLayout *pGridLayout = new QGridLayout(ui->playListWidget);
 			pGridLayout->addWidget(m_pPlaylistWindow, 0, 0, 1, 1);
 			m_pMediaPlayer->setPlaylist(m_pPlaylistWindow->playlist());
+		}
+
+		void XMPMainWindow::updateMetadataInformation()
+		{
+			TagLib::MPEG::File f(m_pMediaPlayer->currentMedia().canonicalUrl().toString().toStdString().c_str());
+			TagLib::ID3v2::Tag *id3v2tag = f.ID3v2Tag();
+			if (id3v2tag)
+			{
+				ui->songNameLabel->setText( "<b>Song :- </b>" + QString( id3v2tag->title().toCString() ));
+				ui->artistLabel->setText( "<b>Artist :- </b>" + QString( id3v2tag->artist().toCString() ));
+				ui->albumLabel->setText( "<b>Album :- </b>" + QString( id3v2tag->album().toCString() ));
+				
+				QPixmap albumArtPixmap = albumArt(id3v2tag);
+				albumArtPixmap = albumArtPixmap.scaled(ui->albumArtLabel->width(), ui->albumArtLabel->height());
+				ui->albumArtLabel->setPixmap(albumArtPixmap);
+			}
 		}
 
 		void XMPMainWindow::openMediaFiles()
@@ -135,14 +161,9 @@ namespace xmp {
 			if ((playState == QMediaPlayer::PausedState) || (playState == QMediaPlayer::StoppedState))
 			{
 				m_pMediaPlayer->play();
-				// not working for now
-				//ui->songNameLabel->setText(m_pMediaPlayer->metaData(QMediaMetaData::Title).toString());
-				ui->songNameLabel->show();
-				ui->playPushButton->setIcon(QIcon(pausePushButtonIconFilePath));
 			}
 			else
 			{
-				ui->playPushButton->setIcon(QIcon(playPushButtonIconFilePath));
 				m_pMediaPlayer->pause();
 			}
 		}
@@ -152,10 +173,7 @@ namespace xmp {
 			{
 				return;
 			}
-			if (m_pMediaPlayer->state() == QMediaPlayer::PlayingState)
-			{
-				m_pMediaPlayer->stop();
-			}
+			stopPlayingMusic();
 			QMediaPlaylist *pPlaylist = m_pPlaylistWindow->playlist();
 			pPlaylist->next();
 			onPlayButtonClicked();
@@ -166,10 +184,7 @@ namespace xmp {
 			{
 				return;
 			}
-			if (m_pMediaPlayer->state() == QMediaPlayer::PlayingState)
-			{
-				m_pMediaPlayer->stop();
-			}
+			stopPlayingMusic();
 			QMediaPlaylist *pPlaylist = m_pPlaylistWindow->playlist();
 			pPlaylist->previous();
 			onPlayButtonClicked();
@@ -201,7 +216,102 @@ namespace xmp {
 		void XMPMainWindow::onStopButtonClicked()
 		{
 			m_pMediaPlayer->stop();
-			ui->playPushButton->setIcon(QIcon(playPushButtonIconFilePath));
+		}
+		void XMPMainWindow::onStateChanged(QMediaPlayer::State state)
+		{
+			if (state == QMediaPlayer::PlayingState)
+			{
+				ui->playPushButton->setIcon(QIcon(pausePushButtonIconFilePath));
+			}
+			else if (state == QMediaPlayer::PausedState)
+			{
+				ui->playPushButton->setIcon(QIcon(playPushButtonIconFilePath));
+			}
+			else
+			{
+				ui->playPushButton->setIcon(QIcon(playPushButtonIconFilePath));
+			}
+		}
+		void XMPMainWindow::onMediaStatusChanged(QMediaPlayer::MediaStatus status)
+		{
+			switch(status)
+			{
+			case QMediaPlayer::UnknownMediaStatus:
+				ui->statusBar->showMessage("Unknown Media Status");
+				break;
+			case QMediaPlayer::NoMedia:
+				ui->statusBar->showMessage("No Media");
+				break;
+			case QMediaPlayer::LoadingMedia:
+				ui->statusBar->showMessage("Loading Media");
+				break;
+			case QMediaPlayer::LoadedMedia:
+				ui->statusBar->showMessage("Media Loaded");
+				break;
+			case QMediaPlayer::StalledMedia:
+				ui->statusBar->showMessage("Stalled Media");
+				break;
+			case QMediaPlayer::BufferingMedia:
+				ui->statusBar->showMessage("Buffering Media");
+				break;
+			case QMediaPlayer::BufferedMedia:
+				updateMetadataInformation();
+				ui->statusBar->showMessage("Buffered Media");
+				break;
+			case QMediaPlayer::EndOfMedia:
+				ui->statusBar->showMessage("End of Media");
+				break;
+			case QMediaPlayer::InvalidMedia:
+				ui->statusBar->showMessage("Invalid Media");
+			}
+		}
+		void XMPMainWindow::resizeEvent(QResizeEvent * pEvent)
+		{
+			TagLib::MPEG::File f(m_pMediaPlayer->currentMedia().canonicalUrl().toString().toStdString().c_str());
+			TagLib::ID3v2::Tag *id3v2tag = f.ID3v2Tag();
+			if (id3v2tag)
+			{
+				QPixmap pix = albumArt(id3v2tag);
+				pix = pix.scaled(ui->albumArtLabel->width(), ui->albumArtLabel->height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+				ui->albumArtLabel->setPixmap(pix);
+			}
+			else
+			{
+				QPixmap pix(albumArtFilePath);
+				pix = pix.scaled(ui->albumArtLabel->width(), ui->albumArtLabel->height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+				ui->albumArtLabel->setPixmap(pix);
+			}
+		}
+		void XMPMainWindow::stopPlayingMusic()
+		{
+			if ( (m_pMediaPlayer->state() == QMediaPlayer::PlayingState) || 
+				(m_pMediaPlayer->state() == QMediaPlayer::PausedState) )
+			{
+				m_pMediaPlayer->stop();
+			}
+		}
+		QPixmap XMPMainWindow::albumArt(TagLib::ID3v2::Tag *pTag) const
+		{
+			QPixmap pix;
+			if (pTag)
+			{
+				TagLib::ID3v2::FrameList frameList = pTag->frameListMap()["APIC"];
+				TagLib::ID3v2::AttachedPictureFrame *picFrame = nullptr;
+				if (!frameList.isEmpty())
+				{
+					for (TagLib::ID3v2::FrameList::ConstIterator it = frameList.begin(); it != frameList.end(); ++it)
+					{
+						unsigned long size;
+						picFrame = (TagLib::ID3v2::AttachedPictureFrame *)(*it);
+						size = picFrame->picture().size();
+						QByteArray byteArray(picFrame->picture().data(), size);
+						pix.loadFromData(byteArray);
+						return pix;
+					}
+				}
+			}
+			pix.load(albumArtFilePath);
+			return pix;
 		}
 	}
 }

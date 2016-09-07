@@ -21,6 +21,7 @@
 #include <QIcon>
 #include <QPixmap>
 #include <QLabel>
+#include <QMessageBox>
 
 namespace {
 	const int CONTROL_PUSHBUTTON_WIDTH = 29;
@@ -46,6 +47,15 @@ namespace xmp {
 				pushButton->setEnabled(isEnabled);
 				pushButton->setFixedSize(CONTROL_PUSHBUTTON_WIDTH, CONTROL_PUSHBUTTON_HEIGHT);
 			}
+		}
+		void XMPHelperClass::showMessageDialog(const QString & title, const QString & msg, int level)
+		{
+			QMessageBox msgBox;
+			msgBox.setWindowTitle(title);
+			msgBox.setInformativeText(msg);
+			msgBox.setStandardButtons(QMessageBox::Ok);
+			msgBox.setIcon((QMessageBox::Icon)level);
+			msgBox.exec();
 		}
 	}
 }

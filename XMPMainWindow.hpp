@@ -21,8 +21,17 @@
 
 #include <QMainWindow>
 #include <QStringList>
+#include <QMediaPlayer>
+#include <QPixmap>
 
 class QFocusEvent;
+class QResizeEvent;
+
+namespace TagLib {
+	namespace ID3v2 {
+		class Tag;
+	}
+}
 
 namespace Ui {
 	class XMPMainWindow;
@@ -50,6 +59,7 @@ namespace xmp {
 			//! Generally initializes the mainwindow ui elements
 			void initUI();
 			void initComponent();
+			void updateMetadataInformation();
 
 			private slots:
 			void openMediaFiles();
@@ -60,8 +70,15 @@ namespace xmp {
 			void onVolumeButtonClicked();
 			void changeVolume(int value);
 			void onStopButtonClicked();
+			void onStateChanged(QMediaPlayer::State state);
+			void onMediaStatusChanged(QMediaPlayer::MediaStatus status);
+		protected:
+			void resizeEvent(QResizeEvent *pEvent);
 
 		private:
+			void stopPlayingMusic();
+			QPixmap albumArt(TagLib::ID3v2::Tag *pTag) const;
+
 			Ui::XMPMainWindow *ui;
 			XMPPlaylist *m_pPlaylistWindow;
 			multimedia::XMPMediaPlayer *m_pMediaPlayer;

@@ -34,6 +34,8 @@ namespace xmp
 			XMPHelperClass();
 
 			static void setStandardControlButtonSettings(QPushButton *pushButton, const QString &iconName, bool isEnabled = true);
+			static void showMessageDialog( const QString &title, const QString &msg, int level );
+			static void updateStatusBar();
 		};
 	}
 }

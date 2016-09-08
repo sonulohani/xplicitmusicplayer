@@ -18,7 +18,9 @@
 
 #include "XMPPlaylist.hpp"
 #include <XMPPlaylistModel.hpp>
+#include <XMPPlaylistView.hpp>
 
+// Qt includes
 #include <QTableWidget>
 #include <QPushButton>
 #include <QHBoxLayout>

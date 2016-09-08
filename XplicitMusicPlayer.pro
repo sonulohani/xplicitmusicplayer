@@ -18,7 +18,8 @@ SOURCES += main.cpp\
     XMPPlaylist.cpp \
 	XMPMediaPlayer.cpp \
 	XMPVolumeSlider.cpp \
-	XMPPlaylistModel.cpp
+	XMPPlaylistModel.cpp \
+	XMPPlaylistView.cpp
 
 HEADERS  += XMPMainWindow.hpp \
     XMPHelperClass.hpp \
@@ -26,7 +27,8 @@ HEADERS  += XMPMainWindow.hpp \
     XMPPlaylist.hpp \
 	XMPMediaPlayer.hpp \
 	XMPVolumeSlider.hpp \
-	XMPPlaylistModel.hpp
+	XMPPlaylistModel.hpp \
+	XMPPlaylistView.hpp
 
 FORMS    += XMPMainWindow.ui
 

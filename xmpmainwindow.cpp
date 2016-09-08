@@ -85,6 +85,8 @@ namespace xmp {
 			assert(connect(ui->actionPlay, SIGNAL(triggered()), SLOT(onPlayButtonClicked())));
 			assert(connect(ui->nextPushButton, SIGNAL(clicked()), SLOT(onNextButtonClicked())));
 			assert(connect(ui->previousPushButton, SIGNAL(clicked()), SLOT(onPrevButtonClicked())));
+			assert(connect(ui->actionPrevious, SIGNAL(triggered()), SLOT(onPrevButtonClicked())));
+			assert(connect(ui->actionNext, SIGNAL(triggered()), SLOT(onNextButtonClicked())));
 			assert(connect(ui->volumePushButton, SIGNAL(clicked()), SLOT(onVolumeButtonClicked())));
 			assert(connect(m_pVolumeSlider, SIGNAL(valueChanged(int)), SLOT(changeVolume(int))));
 			assert(connect(m_pMediaPlayer, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(onStateChanged(QMediaPlayer::State))));

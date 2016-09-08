@@ -346,9 +346,8 @@
     </property>
     <addaction name="actionPlay"/>
     <addaction name="actionStop"/>
-    <addaction name="actionNext_song"/>
-    <addaction name="actionPrevious_song"/>
-    <addaction name="actionPlaylist"/>
+    <addaction name="actionNext"/>
+    <addaction name="actionPrevious"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTools"/>
@@ -388,12 +387,12 @@
     <string>Stop</string>
    </property>
   </action>
-  <action name="actionNext_song">
+  <action name="actionNext">
    <property name="text">
     <string>Next song</string>
    </property>
   </action>
-  <action name="actionPrevious_song">
+  <action name="actionPrevious">
    <property name="text">
     <string>Previous song</string>
    </property>

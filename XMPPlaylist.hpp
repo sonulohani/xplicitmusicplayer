@@ -32,28 +32,7 @@ namespace xmp {
 		class XMPPlaylistModel;
 	}
 	namespace ui {
-		class XMPPlaylistView : public QListView
-		{
-			Q_OBJECT
-		public:
-			XMPPlaylistView(QWidget *parent) :
-				QListView(parent)
-			{
-			}
-		signals:
-			void selectionChanged(const QModelIndex &);
-		protected:
-			void mouseDoubleClickEvent(QMouseEvent *pEvent)
-			{
-				QModelIndex index = indexAt(pEvent->pos());
-				if (index.isValid())
-				{
-					emit selectionChanged(index);
-				}
-				QListView::mouseDoubleClickEvent(pEvent);
-			}
-		};
-
+		class XMPPlaylistView;
 		class XMPPlaylist : public QDialog
 		{
 			Q_OBJECT

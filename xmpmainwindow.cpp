@@ -108,8 +108,6 @@ namespace xmp {
 			ui->artistLabel->setText("<b>Artist :- </b>");
 			ui->albumLabel->setText("<b>Album :- </b>");
 			m_pVolumeSlider = new XMPVolumeSlider;
-
-			resize(500,400);
 		}
 
 		void XMPMainWindow::initComponent()
@@ -131,9 +129,7 @@ namespace xmp {
 				ui->artistLabel->setText( "<b>Artist :- </b>" + QString( id3v2tag->artist().toCString() ));
 				ui->albumLabel->setText( "<b>Album :- </b>" + QString( id3v2tag->album().toCString() ));
 				
-				QPixmap albumArtPixmap = albumArt(id3v2tag);
-				albumArtPixmap = albumArtPixmap.scaled(ui->albumArtLabel->width(), ui->albumArtLabel->height());
-				ui->albumArtLabel->setPixmap(albumArtPixmap);
+				setAlbumArtToLabel(id3v2tag);
 			}
 		}
 
@@ -269,18 +265,8 @@ namespace xmp {
 		{
 			TagLib::MPEG::File f(m_pMediaPlayer->currentMedia().canonicalUrl().toString().toStdString().c_str());
 			TagLib::ID3v2::Tag *id3v2tag = f.ID3v2Tag();
-			if (id3v2tag)
-			{
-				QPixmap pix = albumArt(id3v2tag);
-				pix = pix.scaled(ui->albumArtLabel->width(), ui->albumArtLabel->height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-				ui->albumArtLabel->setPixmap(pix);
-			}
-			else
-			{
-				QPixmap pix(albumArtFilePath);
-				pix = pix.scaled(ui->albumArtLabel->width(), ui->albumArtLabel->height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-				ui->albumArtLabel->setPixmap(pix);
-			}
+			setAlbumArtToLabel(id3v2tag);
+			QMainWindow::resizeEvent(pEvent);
 		}
 		void XMPMainWindow::stopPlayingMusic()
 		{
@@ -290,7 +276,7 @@ namespace xmp {
 				m_pMediaPlayer->stop();
 			}
 		}
-		QPixmap XMPMainWindow::albumArt(TagLib::ID3v2::Tag *pTag) const
+		QPixmap XMPMainWindow::getAlbumArt(TagLib::ID3v2::Tag *pTag) const
 		{
 			QPixmap pix;
 			if (pTag)
@@ -312,6 +298,12 @@ namespace xmp {
 			}
 			pix.load(albumArtFilePath);
 			return pix;
+		}
+		void XMPMainWindow::setAlbumArtToLabel(TagLib::ID3v2::Tag * pTag)
+		{
+			QPixmap pix = getAlbumArt(pTag);
+			pix = pix.scaled(ui->albumArtLabel->width(), ui->albumArtLabel->height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+			ui->albumArtLabel->setPixmap(pix);
 		}
 	}
 }

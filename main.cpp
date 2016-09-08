@@ -30,6 +30,7 @@ int main(int argc, char *argv[])
 
 	xmp::ui::XMPMainWindow w;
 	w.show();
+	w.setAlbumArtToLabel();
 
 	return a.exec();
 }

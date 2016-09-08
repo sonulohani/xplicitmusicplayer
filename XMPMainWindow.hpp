@@ -60,6 +60,7 @@ namespace xmp {
 			void initUI();
 			void initComponent();
 			void updateMetadataInformation();
+			void setAlbumArtToLabel(TagLib::ID3v2::Tag *pTag = nullptr);
 
 			private slots:
 			void openMediaFiles();
@@ -77,7 +78,7 @@ namespace xmp {
 
 		private:
 			void stopPlayingMusic();
-			QPixmap albumArt(TagLib::ID3v2::Tag *pTag) const;
+			QPixmap getAlbumArt(TagLib::ID3v2::Tag *pTag) const;
 
 			Ui::XMPMainWindow *ui;
 			XMPPlaylist *m_pPlaylistWindow;

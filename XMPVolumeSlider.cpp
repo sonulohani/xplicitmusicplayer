@@ -39,8 +39,8 @@ namespace xmp {
 
 		void XMPVolumeSlider::focusOutEvent(QFocusEvent * event)
 		{
-			Q_UNUSED(event);
 			this->hide();
+			QSlider::focusOutEvent(event);
 		}
 	}
 }

@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
 	qsrand(QTime::currentTime().msec());
 
 	xmp::ui::XMPMainWindow w;
+	w.resize(600, 400);
 	w.show();
 	w.setAlbumArtToLabel();
 

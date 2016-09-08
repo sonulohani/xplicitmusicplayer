@@ -91,7 +91,7 @@ namespace xmp {
 
 		void XMPPlaylist::selectCurrentPlaying(int index)
 		{
-			m_pListView->selectionModel()->setCurrentIndex( m_pListView->model()->index(index, 0), QItemSelectionModel::Clear | QItemSelectionModel::Select);
+			m_pListView->selectionModel()->setCurrentIndex(m_pListView->model()->index(index, 0), QItemSelectionModel::Clear | QItemSelectionModel::Select);
 		}
 
 		void XMPPlaylist::addFilesToPlaylist(QStringList fileList)

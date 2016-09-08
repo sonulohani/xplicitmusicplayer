@@ -32,7 +32,6 @@ namespace xmp {
 		class XMPPlaylistModel;
 	}
 	namespace ui {
-
 		class XMPPlaylistView : public QListView
 		{
 			Q_OBJECT
@@ -40,7 +39,6 @@ namespace xmp {
 			XMPPlaylistView(QWidget *parent) :
 				QListView(parent)
 			{
-
 			}
 		signals:
 			void selectionChanged(const QModelIndex &);

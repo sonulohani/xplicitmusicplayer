@@ -89,7 +89,7 @@ namespace xmp {
 			assert(connect(m_pVolumeSlider, SIGNAL(valueChanged(int)), SLOT(changeVolume(int))));
 			assert(connect(m_pMediaPlayer, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(onStateChanged(QMediaPlayer::State))));
 			assert(connect(m_pMediaPlayer, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), SLOT(onMediaStatusChanged(QMediaPlayer::MediaStatus))));
-			assert(connect(ui->playerSlider,SIGNAL(sliderMoved(int)),SLOT(onSliderMoved(int))));
+			assert(connect(ui->playerSlider, SIGNAL(sliderMoved(int)), SLOT(onSliderMoved(int))));
 			// TODO
 			//assert(connect(ui->playerSlider, SIGNAL(valueChanged(int)), SLOT(onSliderMoved(int))));
 			assert(connect(m_pMediaPlayer, SIGNAL(positionChanged(qint64)), SLOT(onDurationChanged(qint64))));
@@ -135,10 +135,10 @@ namespace xmp {
 			TagLib::ID3v2::Tag *id3v2tag = f.ID3v2Tag();
 			if (id3v2tag)
 			{
-				ui->songNameLabel->setText( "<b>Song :- </b>" + QString( id3v2tag->title().toCString() ));
-				ui->artistLabel->setText( "<b>Artist :- </b>" + QString( id3v2tag->artist().toCString() ));
-				ui->albumLabel->setText( "<b>Album :- </b>" + QString( id3v2tag->album().toCString() ));
-				
+				ui->songNameLabel->setText("<b>Song :- </b>" + QString(id3v2tag->title().toCString()));
+				ui->artistLabel->setText("<b>Artist :- </b>" + QString(id3v2tag->artist().toCString()));
+				ui->albumLabel->setText("<b>Album :- </b>" + QString(id3v2tag->album().toCString()));
+
 				setAlbumArtToLabel(id3v2tag);
 			}
 		}
@@ -240,7 +240,7 @@ namespace xmp {
 		}
 		void XMPMainWindow::onMediaStatusChanged(QMediaPlayer::MediaStatus status)
 		{
-			switch(status)
+			switch (status)
 			{
 			case QMediaPlayer::UnknownMediaStatus:
 				ui->statusBar->showMessage("Unknown Media Status");
@@ -280,7 +280,7 @@ namespace xmp {
 		void XMPMainWindow::onDurationChanged(qint64 duration)
 		{
 			ui->playerSlider->setValue(duration / 1000);
-			ui->startTimeLabel->setText(QTime(0,0).addMSecs(duration).toString("mm:ss"));
+			ui->startTimeLabel->setText(QTime(0, 0).addMSecs(duration).toString("mm:ss"));
 		}
 		void XMPMainWindow::onSelectionChanged(const QModelIndex & index)
 		{
@@ -296,8 +296,8 @@ namespace xmp {
 		}
 		void XMPMainWindow::stopPlayingMusic()
 		{
-			if ( (m_pMediaPlayer->state() == QMediaPlayer::PlayingState) || 
-				(m_pMediaPlayer->state() == QMediaPlayer::PausedState) )
+			if ((m_pMediaPlayer->state() == QMediaPlayer::PlayingState) ||
+				(m_pMediaPlayer->state() == QMediaPlayer::PausedState))
 			{
 				m_pMediaPlayer->stop();
 			}

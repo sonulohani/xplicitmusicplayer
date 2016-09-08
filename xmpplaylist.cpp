@@ -17,7 +17,6 @@
 \*/
 
 #include "XMPPlaylist.hpp"
-#include <macros.hpp>
 #include <XMPPlaylistModel.hpp>
 
 #include <QTableWidget>
@@ -31,6 +30,9 @@
 #include <QMediaPlaylist>
 #include <QListView>
 
+// cpp includes
+#include <assert.h>
+
 using QTableWidgetItemList = QList<QTableWidgetItem*>;
 
 namespace {
@@ -43,9 +45,10 @@ namespace xmp {
 		XMPPlaylist::XMPPlaylist(QWidget *parent) : QDialog(parent)
 		{
 			initUI();
-			XMP_VALIDATE(connect(m_pAddToPlaylistButton, SIGNAL(clicked()), SLOT(onAddToPlaylistButtonClicked())));
-			XMP_VALIDATE(connect(m_pRemoveFromPlaylistButton, SIGNAL(clicked()), SLOT(onRemoveFromPlaylistButtonClicked())));
-			XMP_VALIDATE(connect(m_pClearPlaylistPushButton, SIGNAL(clicked()), SLOT(onClearPlaylistButtonClicked())));
+			assert(connect(m_pAddToPlaylistButton, SIGNAL(clicked()), SLOT(onAddToPlaylistButtonClicked())));
+			assert(connect(m_pRemoveFromPlaylistButton, SIGNAL(clicked()), SLOT(onRemoveFromPlaylistButtonClicked())));
+			assert(connect(m_pClearPlaylistPushButton, SIGNAL(clicked()), SLOT(onClearPlaylistButtonClicked())));
+			assert(connect(m_pListView, SIGNAL(selectionChanged(const QModelIndex &)), SIGNAL(selectionChanged(const QModelIndex &))));
 		}
 
 		void XMPPlaylist::initUI()
@@ -53,7 +56,7 @@ namespace xmp {
 			m_pMediaPlaylist = new QMediaPlaylist(this);
 			m_pPlaylistModel = new model::XMPPlaylistModel(this);
 
-			m_pListView = new QListView(this);
+			m_pListView = new XMPPlaylistView(this);
 			m_pListView->setModel(m_pPlaylistModel);
 
 			m_pPlaylistModel->setPlaylist(m_pMediaPlaylist);
@@ -84,6 +87,11 @@ namespace xmp {
 		QMediaPlaylist * XMPPlaylist::playlist() const
 		{
 			return m_pMediaPlaylist;
+		}
+
+		void XMPPlaylist::selectCurrentPlaying(int index)
+		{
+			m_pListView->selectionModel()->setCurrentIndex( m_pListView->model()->index(index, 0), QItemSelectionModel::Clear | QItemSelectionModel::Select);
 		}
 
 		void XMPPlaylist::addFilesToPlaylist(QStringList fileList)

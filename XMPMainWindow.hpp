@@ -73,12 +73,17 @@ namespace xmp {
 			void onStopButtonClicked();
 			void onStateChanged(QMediaPlayer::State state);
 			void onMediaStatusChanged(QMediaPlayer::MediaStatus status);
+			void onSliderMoved(int pos);
+			void onDurationChanged(qint64 duration);
+			void onSelectionChanged(const QModelIndex & index);
+
 		protected:
 			void resizeEvent(QResizeEvent *pEvent);
 
 		private:
 			void stopPlayingMusic();
 			QPixmap getAlbumArt(TagLib::ID3v2::Tag *pTag) const;
+			void updateSlider();
 
 			Ui::XMPMainWindow *ui;
 			XMPPlaylist *m_pPlaylistWindow;

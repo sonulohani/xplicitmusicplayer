@@ -107,7 +107,7 @@
           <item>
            <widget class="QSlider" name="playerSlider">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>

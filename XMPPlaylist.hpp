@@ -21,8 +21,9 @@
 
 #include <QDialog>
 #include <QStringList>
+#include <QListView>
+#include <QMouseEvent>
 
-class QListView;
 class QPushButton;
 class QMediaPlaylist;
 
@@ -31,6 +32,30 @@ namespace xmp {
 		class XMPPlaylistModel;
 	}
 	namespace ui {
+
+		class XMPPlaylistView : public QListView
+		{
+			Q_OBJECT
+		public:
+			XMPPlaylistView(QWidget *parent) :
+				QListView(parent)
+			{
+
+			}
+		signals:
+			void selectionChanged(const QModelIndex &);
+		protected:
+			void mouseDoubleClickEvent(QMouseEvent *pEvent)
+			{
+				QModelIndex index = indexAt(pEvent->pos());
+				if (index.isValid())
+				{
+					emit selectionChanged(index);
+				}
+				QListView::mouseDoubleClickEvent(pEvent);
+			}
+		};
+
 		class XMPPlaylist : public QDialog
 		{
 			Q_OBJECT
@@ -39,9 +64,11 @@ namespace xmp {
 			void initUI();
 			QMediaPlaylist *playlist() const;
 			void addFilesToPlaylist(QStringList fileList);
+			void selectCurrentPlaying(int index);
 
 		signals:
 			void mediaFilesChanged(bool isAdded);
+			void selectionChanged(QModelIndex);
 
 			public slots :
 			void onAddToPlaylistButtonClicked();
@@ -51,7 +78,7 @@ namespace xmp {
 			void onRemoveFromPlaylistButtonClicked();
 
 		private:
-			QListView *m_pListView;
+			XMPPlaylistView *m_pListView;
 			QPushButton *m_pAddToPlaylistButton;
 			QPushButton *m_pRemoveFromPlaylistButton;
 			QPushButton *m_pClearPlaylistPushButton;

@@ -19,7 +19,6 @@
 #include "XMPMainWindow.hpp"
 #include "ui_xmpmainwindow.h"
 #include <XMPHelperClass.hpp>
-#include <macros.hpp>
 #include <XMPPlaylist.hpp>
 #include <XMPMediaPlayer.hpp>
 #include <XMPVolumeSlider.hpp>
@@ -30,6 +29,9 @@
 #include <attachedpictureframe.h>
 #include <id3v2frame.h>
 #include <tlist.h>
+
+//cpp includes
+#include <assert.h>
 
 // Qt includes
 #include <QFileDialog>
@@ -44,6 +46,7 @@
 #include <QMessageBox>
 #include <QByteArray>
 #include <QResizeEvent>
+#include <QTime>
 
 // Private namespace
 namespace {
@@ -72,20 +75,25 @@ namespace xmp {
 			initUI();
 			initComponent();
 
-			XMP_VALIDATE(connect(ui->actionExit, SIGNAL(triggered()), SLOT(close())));
-			XMP_VALIDATE(connect(ui->actionOpen_media, SIGNAL(triggered(bool)), SLOT(openMediaFiles())));
-			XMP_VALIDATE(connect(ui->actionPlaylist, SIGNAL(triggered(bool)), SLOT(openPlaylist())));
-			XMP_VALIDATE(connect(ui->openMediaButton, SIGNAL(clicked()), SLOT(openMediaFiles())));
-			XMP_VALIDATE(connect(ui->playPushButton, SIGNAL(clicked()), SLOT(onPlayButtonClicked())));
-			XMP_VALIDATE(connect(ui->actionStop, SIGNAL(triggered()), SLOT(onStopButtonClicked())));
-			XMP_VALIDATE(connect(ui->stopPushButton, SIGNAL(clicked()), SLOT(onStopButtonClicked())));
-			XMP_VALIDATE(connect(ui->actionPlay, SIGNAL(triggered()), SLOT(onPlayButtonClicked())));
-			XMP_VALIDATE(connect(ui->nextPushButton, SIGNAL(clicked()), SLOT(onNextButtonClicked())));
-			XMP_VALIDATE(connect(ui->previousPushButton, SIGNAL(clicked()), SLOT(onPrevButtonClicked())));
-			XMP_VALIDATE(connect(ui->volumePushButton, SIGNAL(clicked()), SLOT(onVolumeButtonClicked())));
-			XMP_VALIDATE(connect(m_pVolumeSlider, SIGNAL(valueChanged(int)), SLOT(changeVolume(int))));
-			XMP_VALIDATE(connect(m_pMediaPlayer, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(onStateChanged(QMediaPlayer::State))));
-			XMP_VALIDATE(connect(m_pMediaPlayer, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), SLOT(onMediaStatusChanged(QMediaPlayer::MediaStatus))));
+			assert(connect(ui->actionExit, SIGNAL(triggered()), SLOT(close())));
+			assert(connect(ui->actionOpen_media, SIGNAL(triggered(bool)), SLOT(openMediaFiles())));
+			assert(connect(ui->actionPlaylist, SIGNAL(triggered(bool)), SLOT(openPlaylist())));
+			assert(connect(ui->openMediaButton, SIGNAL(clicked()), SLOT(openMediaFiles())));
+			assert(connect(ui->playPushButton, SIGNAL(clicked()), SLOT(onPlayButtonClicked())));
+			assert(connect(ui->actionStop, SIGNAL(triggered()), SLOT(onStopButtonClicked())));
+			assert(connect(ui->stopPushButton, SIGNAL(clicked()), SLOT(onStopButtonClicked())));
+			assert(connect(ui->actionPlay, SIGNAL(triggered()), SLOT(onPlayButtonClicked())));
+			assert(connect(ui->nextPushButton, SIGNAL(clicked()), SLOT(onNextButtonClicked())));
+			assert(connect(ui->previousPushButton, SIGNAL(clicked()), SLOT(onPrevButtonClicked())));
+			assert(connect(ui->volumePushButton, SIGNAL(clicked()), SLOT(onVolumeButtonClicked())));
+			assert(connect(m_pVolumeSlider, SIGNAL(valueChanged(int)), SLOT(changeVolume(int))));
+			assert(connect(m_pMediaPlayer, SIGNAL(stateChanged(QMediaPlayer::State)), SLOT(onStateChanged(QMediaPlayer::State))));
+			assert(connect(m_pMediaPlayer, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), SLOT(onMediaStatusChanged(QMediaPlayer::MediaStatus))));
+			assert(connect(ui->playerSlider,SIGNAL(sliderMoved(int)),SLOT(onSliderMoved(int))));
+			// TODO
+			//assert(connect(ui->playerSlider, SIGNAL(valueChanged(int)), SLOT(onSliderMoved(int))));
+			assert(connect(m_pMediaPlayer, SIGNAL(positionChanged(qint64)), SLOT(onDurationChanged(qint64))));
+			assert(connect(m_pPlaylistWindow, SIGNAL(selectionChanged(const QModelIndex &)), SLOT(onSelectionChanged(const QModelIndex &))));
 		}
 
 		XMPMainWindow::~XMPMainWindow()
@@ -117,6 +125,8 @@ namespace xmp {
 			QGridLayout *pGridLayout = new QGridLayout(ui->playListWidget);
 			pGridLayout->addWidget(m_pPlaylistWindow, 0, 0, 1, 1);
 			m_pMediaPlayer->setPlaylist(m_pPlaylistWindow->playlist());
+
+			ui->playerSlider->setRange(0, m_pMediaPlayer->duration() / 1000);
 		}
 
 		void XMPMainWindow::updateMetadataInformation()
@@ -251,7 +261,9 @@ namespace xmp {
 				ui->statusBar->showMessage("Buffering Media");
 				break;
 			case QMediaPlayer::BufferedMedia:
+				updateSlider();
 				updateMetadataInformation();
+				m_pPlaylistWindow->selectCurrentPlaying(m_pMediaPlayer->playlist()->currentIndex());
 				ui->statusBar->showMessage("Buffered Media");
 				break;
 			case QMediaPlayer::EndOfMedia:
@@ -260,6 +272,20 @@ namespace xmp {
 			case QMediaPlayer::InvalidMedia:
 				ui->statusBar->showMessage("Invalid Media");
 			}
+		}
+		void XMPMainWindow::onSliderMoved(int pos)
+		{
+			m_pMediaPlayer->setPosition(pos * 1000);
+		}
+		void XMPMainWindow::onDurationChanged(qint64 duration)
+		{
+			ui->playerSlider->setValue(duration / 1000);
+			ui->startTimeLabel->setText(QTime(0,0).addMSecs(duration).toString("mm:ss"));
+		}
+		void XMPMainWindow::onSelectionChanged(const QModelIndex & index)
+		{
+			m_pMediaPlayer->playlist()->setCurrentIndex(index.row());
+			m_pMediaPlayer->play();
 		}
 		void XMPMainWindow::resizeEvent(QResizeEvent * pEvent)
 		{
@@ -298,6 +324,12 @@ namespace xmp {
 			}
 			pix.load(albumArtFilePath);
 			return pix;
+		}
+		void XMPMainWindow::updateSlider()
+		{
+			qint64 mediaDuration = m_pMediaPlayer->duration();
+			ui->playerSlider->setMaximum(mediaDuration / 1000);
+			ui->finishTimeLabel->setText(QTime(0, 0).addMSecs(mediaDuration).toString("mm:ss"));
 		}
 		void XMPMainWindow::setAlbumArtToLabel(TagLib::ID3v2::Tag * pTag)
 		{

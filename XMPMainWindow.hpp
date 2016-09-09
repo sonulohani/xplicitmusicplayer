@@ -23,6 +23,7 @@
 #include <QStringList>
 #include <QMediaPlayer>
 #include <QPixmap>
+#include <QSystemTrayIcon>
 
 class QFocusEvent;
 class QResizeEvent;
@@ -76,19 +77,24 @@ namespace xmp {
 			void onSliderMoved(int pos);
 			void onDurationChanged(qint64 duration);
 			void onSelectionChanged(const QModelIndex & index);
+			void onShow(QSystemTrayIcon::ActivationReason reason);
+			void onShuffleButtonClicked();
 
 		protected:
 			void resizeEvent(QResizeEvent *pEvent);
+			void changeEvent(QEvent *pEvent);
 
 		private:
 			void stopPlayingMusic();
 			QPixmap getAlbumArt(TagLib::ID3v2::Tag *pTag) const;
 			void updateSlider();
+			void createTrayIcon();
 
 			Ui::XMPMainWindow *ui;
 			XMPPlaylist *m_pPlaylistWindow;
 			multimedia::XMPMediaPlayer *m_pMediaPlayer;
 			XMPVolumeSlider *m_pVolumeSlider;
+			QSystemTrayIcon *m_pTrayIcon;
 		};
 	}
 }

@@ -63,6 +63,7 @@ namespace {
 	const QString muteVolumePushButtonIconFilePath = ":/controls/resources/icons/mute_icon_small.png";
 	const QString stopPushButtoniconFilePath = ":/controls/resources/icons/stop_icon_small.png";
 	const QString albumArtFilePath = ":/controls/resources/icons/dummy_album_art.jpg";
+	const QString appIconFilePath = ":/controls/resources/icons/music_player_icon.png";
 }
 
 namespace xmp {
@@ -74,6 +75,7 @@ namespace xmp {
 			ui->setupUi(this);
 			initUI();
 			initComponent();
+			setWindowIcon(QIcon(appIconFilePath));
 
 			assert(connect(ui->actionExit, SIGNAL(triggered()), SLOT(close())));
 			assert(connect(ui->actionOpen_media, SIGNAL(triggered(bool)), SLOT(openMediaFiles())));
@@ -96,6 +98,7 @@ namespace xmp {
 			//assert(connect(ui->playerSlider, SIGNAL(valueChanged(int)), SLOT(onSliderMoved(int))));
 			assert(connect(m_pMediaPlayer, SIGNAL(positionChanged(qint64)), SLOT(onDurationChanged(qint64))));
 			assert(connect(m_pPlaylistWindow, SIGNAL(selectionChanged(const QModelIndex &)), SLOT(onSelectionChanged(const QModelIndex &))));
+			assert(connect(ui->shufflePushButton, SIGNAL(clicked()), SLOT(onShuffleButtonClicked())));
 		}
 
 		XMPMainWindow::~XMPMainWindow()
@@ -289,12 +292,38 @@ namespace xmp {
 			m_pMediaPlayer->playlist()->setCurrentIndex(index.row());
 			m_pMediaPlayer->play();
 		}
+		void XMPMainWindow::onShow(QSystemTrayIcon::ActivationReason reason)
+		{
+			if (reason != QSystemTrayIcon::DoubleClick)
+				return;
+
+			showNormal();
+
+			delete m_pTrayIcon;
+		}
+		void XMPMainWindow::onShuffleButtonClicked()
+		{
+			m_pMediaPlayer->playlist()->shuffle();
+		}
 		void XMPMainWindow::resizeEvent(QResizeEvent * pEvent)
 		{
 			TagLib::MPEG::File f(m_pMediaPlayer->currentMedia().canonicalUrl().toString().toStdString().c_str());
 			TagLib::ID3v2::Tag *id3v2tag = f.ID3v2Tag();
 			setAlbumArtToLabel(id3v2tag);
 			QMainWindow::resizeEvent(pEvent);
+		}
+		void XMPMainWindow::changeEvent(QEvent * pEvent)
+		{
+			if (pEvent->type() == QEvent::WindowStateChange)
+			{
+				if (windowState() & Qt::WindowMinimized)
+				{
+					this->hide();
+					createTrayIcon();
+					return;
+				}
+			}
+			QMainWindow::changeEvent(pEvent);
 		}
 		void XMPMainWindow::stopPlayingMusic()
 		{
@@ -338,6 +367,38 @@ namespace xmp {
 			QPixmap pix = getAlbumArt(pTag);
 			pix = pix.scaled(ui->albumArtLabel->width(), ui->albumArtLabel->height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 			ui->albumArtLabel->setPixmap(pix);
+		}
+		void XMPMainWindow::createTrayIcon()
+		{
+			m_pTrayIcon = new QSystemTrayIcon(QIcon(appIconFilePath), this);
+
+			assert(connect(m_pTrayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(onShow(QSystemTrayIcon::ActivationReason))));
+
+			QAction *pPlayAction = new QAction("Play/Pause", m_pTrayIcon);
+			assert(connect(pPlayAction, SIGNAL(triggered()), this, SLOT(onPlayButtonClicked())));
+
+			QAction *pStopAction = new QAction("Stop", m_pTrayIcon);
+			assert(connect(pStopAction, SIGNAL(triggered()), this, SLOT(onStopButtonClicked())));
+
+			QAction *pNextAction = new QAction("Next", m_pTrayIcon);
+			assert(connect(pNextAction, SIGNAL(triggered()), this, SLOT(onNextButtonClicked())));
+
+			QAction *pPreviousAction = new QAction("Previous", m_pTrayIcon);
+			assert(connect(pPreviousAction, SIGNAL(triggered()), this, SLOT(onPrevButtonClicked())));
+
+			QAction *pExitAction = new QAction("Exit", m_pTrayIcon);
+			assert(connect(pExitAction, SIGNAL(triggered()), this, SLOT(close())));
+
+			QMenu *pTrayIconMenu = new QMenu;
+			pTrayIconMenu->addAction(pPlayAction);
+			pTrayIconMenu->addAction(pStopAction);
+			pTrayIconMenu->addAction(pNextAction);
+			pTrayIconMenu->addAction(pPreviousAction);
+			pTrayIconMenu->addAction(pExitAction);
+
+			m_pTrayIcon->setContextMenu(pTrayIconMenu);
+
+			m_pTrayIcon->show();
 		}
 	}
 }

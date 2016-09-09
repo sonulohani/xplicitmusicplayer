@@ -23,5 +23,6 @@
         <file>resources/icons/shuffle_icon_small.png</file>
         <file>resources/icons/stop_icon_small.png</file>
         <file>resources/icons/dummy_album_art.jpg</file>
+        <file>resources/icons/music_player_icon.png</file>
     </qresource>
 </RCC>

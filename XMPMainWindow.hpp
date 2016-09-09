@@ -89,6 +89,7 @@ namespace xmp {
 			QPixmap getAlbumArt(TagLib::ID3v2::Tag *pTag) const;
 			void updateSlider();
 			void createTrayIcon();
+			void showSystemTrayMessage(const QString &title, const QString &msg);
 
 			Ui::XMPMainWindow *ui;
 			XMPPlaylist *m_pPlaylistWindow;

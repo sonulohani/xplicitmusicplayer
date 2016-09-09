@@ -71,7 +71,9 @@ namespace xmp {
 		XMPMainWindow::XMPMainWindow(QWidget *parent) :
 			QMainWindow(parent),
 			ui(new Ui::XMPMainWindow),
-			m_pPlaylistWindow(nullptr) {
+			m_pPlaylistWindow(nullptr),
+			m_pTrayIcon(nullptr)
+		{
 			ui->setupUi(this);
 			initUI();
 			initComponent();
@@ -121,6 +123,12 @@ namespace xmp {
 			ui->artistLabel->setText("<b>Artist :- </b>");
 			ui->albumLabel->setText("<b>Album :- </b>");
 			m_pVolumeSlider = new XMPVolumeSlider;
+
+			ui->playPushButton->setShortcut(Qt::Key_Space);
+			ui->stopPushButton->setShortcut(Qt::Key_S);
+			ui->previousPushButton->setShortcut(Qt::Key_P);
+			ui->nextPushButton->setShortcut(Qt::Key_N);
+			ui->shufflePushButton->setShortcut(Qt::Key_H);
 		}
 
 		void XMPMainWindow::initComponent()
@@ -172,10 +180,12 @@ namespace xmp {
 			if ((playState == QMediaPlayer::PausedState) || (playState == QMediaPlayer::StoppedState))
 			{
 				m_pMediaPlayer->play();
+				showSystemTrayMessage(tr("Playing"), QFileInfo(m_pMediaPlayer->playlist()->currentMedia().canonicalUrl().path()).fileName());
 			}
 			else
 			{
 				m_pMediaPlayer->pause();
+				showSystemTrayMessage(tr("Paused"), QFileInfo(m_pMediaPlayer->playlist()->currentMedia().canonicalUrl().path()).fileName());
 			}
 		}
 		void XMPMainWindow::onNextButtonClicked()
@@ -226,7 +236,13 @@ namespace xmp {
 		}
 		void XMPMainWindow::onStopButtonClicked()
 		{
+			if (m_pPlaylistWindow->playlist()->isEmpty())
+			{
+				return;
+			}
 			m_pMediaPlayer->stop();
+
+			showSystemTrayMessage(tr("Stopped"), QFileInfo(m_pMediaPlayer->playlist()->currentMedia().canonicalUrl().path()).fileName());
 		}
 		void XMPMainWindow::onStateChanged(QMediaPlayer::State state)
 		{
@@ -269,6 +285,7 @@ namespace xmp {
 				updateSlider();
 				updateMetadataInformation();
 				m_pPlaylistWindow->selectCurrentPlaying(m_pMediaPlayer->playlist()->currentIndex());
+				showSystemTrayMessage(tr("Playing"), QFileInfo(m_pMediaPlayer->playlist()->currentMedia().canonicalUrl().path()).fileName());
 				ui->statusBar->showMessage("Buffered Media");
 				break;
 			case QMediaPlayer::EndOfMedia:
@@ -300,6 +317,7 @@ namespace xmp {
 			showNormal();
 
 			delete m_pTrayIcon;
+			m_pTrayIcon = nullptr;
 		}
 		void XMPMainWindow::onShuffleButtonClicked()
 		{
@@ -307,7 +325,7 @@ namespace xmp {
 		}
 		void XMPMainWindow::resizeEvent(QResizeEvent * pEvent)
 		{
-			TagLib::MPEG::File f(m_pMediaPlayer->currentMedia().canonicalUrl().toString().toStdString().c_str());
+			TagLib::MPEG::File f(m_pMediaPlayer->currentMedia().canonicalUrl().path().toStdString().c_str());
 			TagLib::ID3v2::Tag *id3v2tag = f.ID3v2Tag();
 			setAlbumArtToLabel(id3v2tag);
 			QMainWindow::resizeEvent(pEvent);
@@ -391,14 +409,21 @@ namespace xmp {
 
 			QMenu *pTrayIconMenu = new QMenu;
 			pTrayIconMenu->addAction(pPlayAction);
-			pTrayIconMenu->addAction(pStopAction);
 			pTrayIconMenu->addAction(pNextAction);
 			pTrayIconMenu->addAction(pPreviousAction);
+			pTrayIconMenu->addAction(pStopAction);
 			pTrayIconMenu->addAction(pExitAction);
 
 			m_pTrayIcon->setContextMenu(pTrayIconMenu);
 
 			m_pTrayIcon->show();
+		}
+		void XMPMainWindow::showSystemTrayMessage(const QString &title, const QString &msg)
+		{
+			if (m_pTrayIcon)
+			{
+				m_pTrayIcon->showMessage(title, msg);
+			}
 		}
 	}
 }

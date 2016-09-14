@@ -101,6 +101,7 @@ namespace xmp {
 			assert(connect(m_pMediaPlayer, SIGNAL(positionChanged(qint64)), SLOT(onDurationChanged(qint64))));
 			assert(connect(m_pPlaylistWindow, SIGNAL(selectionChanged(const QModelIndex &)), SLOT(onSelectionChanged(const QModelIndex &))));
 			assert(connect(ui->shufflePushButton, SIGNAL(clicked()), SLOT(onShuffleButtonClicked())));
+			assert(connect(ui->actionAbout_XMP, SIGNAL(triggered()), SLOT(onAboutXMPTriggerred())));
 		}
 
 		XMPMainWindow::~XMPMainWindow()
@@ -117,7 +118,7 @@ namespace xmp {
 			xmp::helper::XMPHelperClass::setStandardControlButtonSettings(ui->nextPushButton, nextPushButtonIconFilePath);
 			xmp::helper::XMPHelperClass::setStandardControlButtonSettings(ui->volumePushButton, volumePushButtonIconFilePath);
 			xmp::helper::XMPHelperClass::setStandardControlButtonSettings(ui->shufflePushButton, shufflePushButtonIconFilePath);
-			xmp::helper::XMPHelperClass::setStandardControlButtonSettings(ui->repeatPushButton, repeatPushButtonIconFilePath);
+			//xmp::helper::XMPHelperClass::setStandardControlButtonSettings(ui->repeatPushButton, repeatPushButtonIconFilePath);
 
 			ui->songNameLabel->setText("<b>Song :- </b>");
 			ui->artistLabel->setText("<b>Artist :- </b>");
@@ -213,7 +214,7 @@ namespace xmp {
 		void XMPMainWindow::onVolumeButtonClicked()
 		{
 			m_pVolumeSlider->setValue(m_pMediaPlayer->volume());
-			m_pVolumeSlider->move(mapToParent(QPoint(ui->volumePushButton->x() - 50, ui->volumePushButton->y() + 70)));
+			m_pVolumeSlider->move(mapToParent(QPoint(ui->volumePushButton->x() - 50, ui->volumePushButton->y() + 50)));
 			m_pVolumeSlider->show();
 			m_pVolumeSlider->setFocus();
 		}
@@ -323,9 +324,13 @@ namespace xmp {
 		{
 			m_pMediaPlayer->playlist()->shuffle();
 		}
+		void XMPMainWindow::onAboutXMPTriggerred()
+		{
+			helper::XMPHelperClass::showMessageDialog(tr("About Xplicit Media Player"), tr("<b>Music player that never sucks.</b>\nCopyright 2016-2017 Sonu Lohani <sonulohani@gmail.com>"), QMessageBox::Information);
+		}
 		void XMPMainWindow::resizeEvent(QResizeEvent * pEvent)
 		{
-			TagLib::MPEG::File f(m_pMediaPlayer->currentMedia().canonicalUrl().path().toStdString().c_str());
+			TagLib::MPEG::File f(m_pMediaPlayer->currentMedia().canonicalUrl().toString().toStdString().c_str());
 			TagLib::ID3v2::Tag *id3v2tag = f.ID3v2Tag();
 			setAlbumArtToLabel(id3v2tag);
 			QMainWindow::resizeEvent(pEvent);

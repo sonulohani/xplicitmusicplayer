@@ -79,6 +79,7 @@ namespace xmp {
 			void onSelectionChanged(const QModelIndex & index);
 			void onShow(QSystemTrayIcon::ActivationReason reason);
 			void onShuffleButtonClicked();
+			void onAboutXMPTriggerred();
 
 		protected:
 			void resizeEvent(QResizeEvent *pEvent);

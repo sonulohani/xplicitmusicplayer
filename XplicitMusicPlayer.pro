@@ -14,12 +14,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         XMPMainWindow.cpp \
-    XMPHelperClass.cpp \
-    XMPPlaylist.cpp \
+        XMPHelperClass.cpp \
+        XMPPlaylist.cpp \
 	XMPMediaPlayer.cpp \
-	XMPVolumeSlider.cpp \
+        XMPVolumeSlider.cpp \
 	XMPPlaylistModel.cpp \
-	XMPPlaylistView.cpp
+        XMPPlaylistView.cpp
 
 HEADERS  += XMPMainWindow.hpp \
     XMPHelperClass.hpp \

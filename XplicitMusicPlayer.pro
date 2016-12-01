@@ -34,3 +34,11 @@ FORMS    += XMPMainWindow.ui
 
 RESOURCES += \
     icons.qrc
+
+
+unix: LIBS += -L$$PWD/../../../../usr/local/lib/ -L/usr/lib/ -lz -ltag
+
+INCLUDEPATH += $$PWD/../../../../usr/local/include
+DEPENDPATH += $$PWD/../../../../usr/local/include
+
+unix: PRE_TARGETDEPS += $$PWD/../../../../usr/local/lib/libtag.a

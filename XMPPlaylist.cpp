@@ -101,8 +101,12 @@ namespace xmp {
 			if (!fileList.isEmpty())
 			{
 				Q_FOREACH(QString file, fileList)
-				{
-					m_pMediaPlaylist->addMedia(QUrl(file));
+                {
+#ifdef Q_OS_WIN32
+                    m_pMediaPlaylist->addMedia(QUrl(file));
+#elif defined(Q_OS_LINUX)
+                    m_pMediaPlaylist->addMedia(QUrl::fromLocalFile(file));
+#endif
 				}
 			}
 		}

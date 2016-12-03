@@ -20,7 +20,6 @@
 #include "ui_xmpmainwindow.h"
 #include <XMPHelperClass.hpp>
 #include <XMPPlaylist.hpp>
-#include <XMPMediaPlayer.hpp>
 #include <XMPVolumeSlider.hpp>
 
 // Taglib includes
@@ -135,7 +134,7 @@ namespace xmp {
         void XMPMainWindow::initComponent()
         {
             m_pPlaylistWindow = new XMPPlaylist(this);
-            m_pMediaPlayer = new multimedia::XMPMediaPlayer(this);
+            m_pMediaPlayer = new QMediaPlayer(this);
             QGridLayout *pGridLayout = new QGridLayout(ui->playListWidget);
             pGridLayout->addWidget(m_pPlaylistWindow, 0, 0, 1, 1);
             m_pMediaPlayer->setPlaylist(m_pPlaylistWindow->playlist());

@@ -39,9 +39,6 @@ namespace Ui {
 }
 
 namespace xmp {
-	namespace multimedia {
-		class XMPMediaPlayer;
-	}
 	namespace ui {
 		class XMPPlaylist;
 		class XMPVolumeSlider;
@@ -94,7 +91,7 @@ namespace xmp {
 
 			Ui::XMPMainWindow *ui;
 			XMPPlaylist *m_pPlaylistWindow;
-			multimedia::XMPMediaPlayer *m_pMediaPlayer;
+            QMediaPlayer *m_pMediaPlayer;
 			XMPVolumeSlider *m_pVolumeSlider;
 			QSystemTrayIcon *m_pTrayIcon;
 		};
